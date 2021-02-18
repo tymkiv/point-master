@@ -69,6 +69,7 @@ class Sketch {
     this.container.clientWidth / this.container.clientHeight,
     0.001, 100
     );
+    // this.camera = new THREE.OrthographicCamera( 100 / - 2, 100 / 2, 100 / 2, 100 / - 2, 1, 1000 )
     this.camera.position.set(0, 0, 1);
 
     this.scene = new THREE.Scene();
