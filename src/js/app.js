@@ -14,7 +14,8 @@ class Sketch {
     this.init();
 
     // Do something
-
+    this.raycaster = new THREE.Raycaster();
+    this.mMouse = new THREE.Vector2();  
     this.countX = 100; // width
     this.countY = 100; // height
     this.mouse = {};

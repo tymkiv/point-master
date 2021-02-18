@@ -20,9 +20,11 @@ export default class Particle {
     this.speedX = 0;
     this.speedY = 0;
 
-    this.radius = 50;
+    // this.radius = 50;
+    this.radius = Math.random() * (200 - 50) + 50;
 
-    this.friction = 0.9;
+    // this.friction = 0.9;
+    this.friction = Math.random() * (0.9 - 0.6) + 0.6;
     this.gravity = 0.01;
 
     this.maxGravity = 0.01 + Math.random() * 0.03;
@@ -43,8 +45,8 @@ export default class Particle {
   }
 
   update() {
-    const distanceX = Math.abs(this.mouse.x - this.x);
-    const distanceY = Math.abs(this.mouse.y - this.y);
+    const distanceX = (this.mouse.x - this.x);
+    const distanceY = (this.mouse.y - this.y);
 
     const distance = Math.sqrt(distanceX**2 + distanceY**2);
 
@@ -52,11 +54,12 @@ export default class Particle {
     const normalY = distanceY / distance;
 
     if (distance < this.radius){
-      this.gravity *= this.friction;
+      this.gravity *= 0.9;
       this.speedX -= normalX;
       this.speedY -= normalY;
     } else {
       this.gravity += 0.1 * (this.maxGravity - this.gravity);
+      // this.gravity += 0.1;
     }
 
     // back home
