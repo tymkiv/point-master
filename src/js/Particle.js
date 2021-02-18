@@ -96,9 +96,7 @@ export default class Particle {
     //     console.log(this.z);
     //   }
     // }
-    if (this.index === 500) {
-      console.log(this.z);
-    }
+    
     
     const normalized = this.normalize(this.x, this.y, this.z);
     
