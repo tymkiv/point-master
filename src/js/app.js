@@ -26,8 +26,8 @@ class Sketch {
 
     for (let i = 0; i < this.countX * this.countY; i += 1) {
       this.particles.push(new Particle({
-        x: Math.random() * this.container.clientWidth,
-        y: Math.random() * this.container.clientHeight,
+        x: Math.random() * (this.container.clientWidth * 0.75 - this.container.clientWidth * 0.25) + this.container.clientWidth * 0.25,
+        y: Math.random() * (this.container.clientHeight * 0.75 - this.container.clientHeight * 0.25) + this.container.clientHeight * 0.25,
         z: 0,
         floatArr: this.cubeArr,
         index: i,

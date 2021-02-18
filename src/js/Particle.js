@@ -22,7 +22,7 @@ export default class Particle {
     this.speedZ = 0;
 
     // this.radius = 50;
-    this.radius = Math.random() * (150 - 50) + 50;
+    this.radius = Math.random() * (50 - 30) + 30;
 
     this.friction = 0.9;
     // this.friction = Math.random() * (0.9 - 0.6) + 0.6;
@@ -87,7 +87,7 @@ export default class Particle {
     this.y += this.speedY;
 
     this.z += Math.sqrt(this.speedX**2 + this.speedY**2) / 10;
-    this.z *= 0.9;
+    this.z *= 0.95;
     // const d = Math.sqrt(oDistX * oDistX + oDistY * oDistY);
     // if (d) {
     //   const s = 100 / d;
