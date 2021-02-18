@@ -45,6 +45,11 @@ export default class Particle {
     }
   }
 
+  resize(width, height) {
+    this.width = width;
+    this.height = height;
+  }
+
   update() {
     this.radius = Math.random() * (150 - 1) + 1;
     this.maxGravity = 0.01 + Math.random() * 0.03;

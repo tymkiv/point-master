@@ -54,8 +54,8 @@ class Sketch {
     this.points = new THREE.Points(this.geometry, this.material);
     this.scene.add(this.points);
 
-    this.points.position.x -= 0.5;
-    this.points.position.y -= 0.5;
+    // this.points.position.x -= 3;
+    // this.points.position.y -= 2;
     
     // End of something
     
@@ -110,6 +110,10 @@ class Sketch {
   onWindowResize() {
     this.width = this.container.clientWidth;
     this.height = this.container.clientHeight;
+
+    this.particles.forEach(particle => {
+      particle.resize(this.width, this.height);
+    })
 
     this.renderer.setSize(this.width, this.height);
 
