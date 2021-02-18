@@ -8,5 +8,7 @@ void main() {
   vec3 p = position;
   p -= 0.5;
   p *= 2.;
-   gl_Position = vec4( p, 1.0 );
+  gl_PointSize = min(5.0, p.z);
+  // gl_PointSize = max(2.0, min(10.0, p.z));
+   gl_Position = vec4( p.x, p.y, 0.0, 1.0 );
 }

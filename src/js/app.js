@@ -120,6 +120,8 @@ class Sketch {
     this.resolutionWidth = this.renderer.domElement.width;
     this.resolutionHeight = this.renderer.domElement.height;
     
+    // this.material.uniforms.uResolution.value.x = this.width;
+    // this.material.uniforms.uResolution.value.y = this.height;
     this.material.uniforms.uResolution.value.x = this.resolutionWidth;
     this.material.uniforms.uResolution.value.y = this.resolutionHeight;
   }

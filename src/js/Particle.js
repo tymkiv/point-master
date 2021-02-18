@@ -26,7 +26,7 @@ export default class Particle {
 
     this.friction = 0.9;
     // this.friction = Math.random() * (0.9 - 0.6) + 0.6;
-    this.gravity = 0.01;
+    this.gravity = 0.001;
 
     
 
@@ -53,8 +53,8 @@ export default class Particle {
   }
 
   update() {
-    this.radius = Math.random() * (150 - 1) + 1;
-    this.maxGravity = 0.01 + Math.random() * 0.03;
+    // this.radius = Math.random() * (150 - 1) + 1;
+    // this.maxGravity = 0.01 + Math.random() * 0.03;
     const distanceX = (this.mouse.x - this.x);
     const distanceY = (this.mouse.y - this.y);
 
@@ -70,7 +70,7 @@ export default class Particle {
       
     } else {
       // this.speedZ /= 10;
-      this.gravity += 0.1 * (this.maxGravity - this.gravity);
+      // this.gravity += 0.1 * (this.maxGravity - this.gravity);
     }
     
     // back home
@@ -86,9 +86,20 @@ export default class Particle {
     this.x += this.speedX;
     this.y += this.speedY;
 
-    this.z += Math.sqrt(this.speedX**2 + this.speedY**2) / 1000;
+    this.z += Math.sqrt(this.speedX**2 + this.speedY**2) / 10;
     this.z *= 0.9;
-
+    // const d = Math.sqrt(oDistX * oDistX + oDistY * oDistY);
+    // if (d) {
+    //   const s = 100 / d;
+    //   this.z = ((Math.round((Math.random() * 400) / 10) + 1) / 40) * s * s
+    //   if (this.index === 500) {
+    //     console.log(this.z);
+    //   }
+    // }
+    if (this.index === 500) {
+      console.log(this.z);
+    }
+    
     const normalized = this.normalize(this.x, this.y, this.z);
     
     this.floatArr[this.index * 3 + 0] = normalized.x;
