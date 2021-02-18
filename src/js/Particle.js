@@ -46,6 +46,8 @@ export default class Particle {
   }
 
   resize(width, height) {
+    this.originX *= width / this.width;
+    this.originY *= height / this.height;
     this.width = width;
     this.height = height;
   }
