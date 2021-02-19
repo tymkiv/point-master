@@ -18,7 +18,7 @@ class Sketch {
     this.mMouse = new THREE.Vector2();  
     this.countX = 100; // width
     this.countY = 100; // height
-    this.mouse = {};
+    this.mouse = {x:0,y:0};
     this.particles = [];
     this.geometry = new THREE.BufferGeometry();
 
@@ -103,8 +103,51 @@ class Sketch {
   }
 
   onMouseMove(e) {
-    this.mouse.x = e.pageX;
-    this.mouse.y = e.pageY;
+    this.mouse.x = e.clientX;
+    this.mouse.y = e.clientY;
+
+    //   if (touch) {
+    //     e.preventDefault();
+    //     this.mouse.x = e.targetTouches[0].clientX;
+    //     this.mouse.y = e.targetTouches[0].clientY;
+    //   }
+
+
+    // (e) => {
+    //   if (touch) {
+    //     e.preventDefault();
+    //     this.x = e.targetTouches[0].clientX;
+    //     this.y = e.targetTouches[0].clientY;
+    //   } else {
+    //     this.x = e.clientX;
+    //     this.y = e.clientY;
+    //   }
+    // },
+
+    // const pointer = {
+    //   init(canvas) {
+    //     this.x = 0;
+    //     this.y = 0;
+    //     this.s = 0;
+    //     ["mousemove", "touchstart", "touchmove"].forEach((event, touch) => {
+    //       document.addEventListener(
+    //         event,
+    //         (e) => {
+    //           if (touch) {
+    //             e.preventDefault();
+    //             this.x = e.targetTouches[0].clientX;
+    //             this.y = e.targetTouches[0].clientY;
+    //           } else {
+    //             this.x = e.clientX;
+    //             this.y = e.clientY;
+    //           }
+    //         },
+    //         false,
+    //       );
+    //     });
+    //   },
+    // };
+
   }
 
   onWindowResize() {

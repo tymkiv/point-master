@@ -1,12 +1,22 @@
 export default class Particle {
   constructor(props = {}) {
+    this.width = props.width;
+    this.height = props.height;
+
     this.originX = props.x || 0;
     this.originY = props.y || 0;
     this.originZ = props.z || 0;
 
+    this.originX = Math.random();
+    this.originY = Math.random();
+    this.originZ = Math.random();
+
     this.x = this.originX;
     this.y = this.originY;
     this.z = this.originZ;
+
+    this.x = this.width - Math.floor(Math.random() * this.width); // in 3
+    this.y = this.height + Math.floor(Math.random() * this.height * 2);
 
     this.floatArr = props.floatArr;
 
@@ -14,8 +24,8 @@ export default class Particle {
 
     this.mouse = props.mouse;
 
-    this.width = props.width;
-    this.height = props.height;
+    this.speed = Math.round((Math.random() * 400) / 10) + 1;
+    
 
     this.speedX = 0;
     this.speedY = 0;
@@ -52,7 +62,7 @@ export default class Particle {
     this.height = height;
   }
 
-  update() {
+  updateMy() {
     // this.radius = Math.random() * (150 - 1) + 1;
     // this.maxGravity = 0.01 + Math.random() * 0.03;
     const distanceX = (this.mouse.x - this.x);
@@ -100,6 +110,37 @@ export default class Particle {
     
     const normalized = this.normalize(this.x, this.y, this.z);
     
+    this.floatArr[this.index * 3 + 0] = normalized.x;
+    this.floatArr[this.index * 3 + 1] = normalized.y;
+    this.floatArr[this.index * 3 + 2] = normalized.z;
+  }
+
+  update() {
+    const dx = this.mouse.x - this.x;
+    const dy = this.mouse.y - this.y;
+
+    const wslogox = this.originX*this.width / 1.5 + 
+      this.width / 2 +
+      Math.round(Math.random() * 20);
+
+    const wslogoy =
+      this.originY*this.height / -1.5 +
+      this.height / 2 +
+      Math.round(Math.random() * 20);
+    
+    const d = Math.sqrt(dx * dx + dy * dy);
+
+    const s = 100 / d;
+
+    this.x += -s * (dx / d) + ((wslogox - this.x) * this.speed) / 1000; // weird results with 2
+    this.y += -s * (dy / d) + ((wslogoy - this.y) * this.speed) / 1000;
+
+    
+    // tt.pos[0] = tt.x;
+    // tt.pos[1] = tt.y;
+    // tt.pos[2] = (tt.speed / 40) * s * s;
+
+    const normalized = this.normalize(this.x, this.y, this.z);
     this.floatArr[this.index * 3 + 0] = normalized.x;
     this.floatArr[this.index * 3 + 1] = normalized.y;
     this.floatArr[this.index * 3 + 2] = normalized.z;
