@@ -7,8 +7,8 @@ export default class Particle {
     this.originY = props.y || 0;
     this.originZ = props.z || 0;
 
-    this.originX = Math.random();
-    this.originY = Math.random();
+    this.originX = Math.random() * (0.75 - 0.25) + 0.25;
+    this.originY = Math.random() * (0.75 - 0.25) + 0.25;
     this.originZ = Math.random();
 
     this.x = this.originX;
@@ -24,7 +24,10 @@ export default class Particle {
 
     this.mouse = props.mouse;
 
-    this.speed = Math.round((Math.random() * 400) / 10) + 1;
+    this.speed = Math.random() / 2;
+    this.speed1 = Math.round((Math.random() * 400) / 10) + 1;
+    // this.speed = Math.random();
+    
     
 
     this.speedX = 0;
@@ -56,8 +59,12 @@ export default class Particle {
   }
 
   resize(width, height) {
-    this.originX *= width / this.width;
-    this.originY *= height / this.height;
+    // if (this.index === 0)console.log(width / this.width);
+    // if (this.index === 0)console.log(this.originX);
+    // if (this.index === 0)console.log(width, height);
+
+    // this.originX *= width / this.width;
+    // this.originY *= height / this.height;
     this.width = width;
     this.height = height;
   }
@@ -103,7 +110,7 @@ export default class Particle {
     //   const s = 100 / d;
     //   this.z = ((Math.round((Math.random() * 400) / 10) + 1) / 40) * s * s
     //   if (this.index === 500) {
-    //     console.log(this.z);
+    //     4le.log(this.z);
     //   }
     // }
     
@@ -118,22 +125,28 @@ export default class Particle {
   update() {
     const dx = this.mouse.x - this.x;
     const dy = this.mouse.y - this.y;
-
-    const wslogox = this.originX*this.width / 1.5 + 
-      this.width / 2 +
-      Math.round(Math.random() * 20);
-
-    const wslogoy =
-      this.originY*this.height / -1.5 +
-      this.height / 2 +
-      Math.round(Math.random() * 20);
-    
     const d = Math.sqrt(dx * dx + dy * dy);
-
     const s = 100 / d;
+  
+    const normalX = dx / d;
+    const normalY = dy / d;
 
-    this.x += -s * (dx / d) + ((wslogox - this.x) * this.speed) / 1000; // weird results with 2
-    this.y += -s * (dy / d) + ((wslogoy - this.y) * this.speed) / 1000;
+    const oDistX = this.originX*this.width - this.x;
+    const oDistY = this.originY*this.height - this.y;
+
+    // inertial returning to original place
+    this.x += this.speed/10 * oDistX;
+    this.y += this.speed/10 * oDistY;
+    
+    // reaction on mouse
+    this.x -= normalX * s;
+    this.y -= normalY * s;
+    this.z = this.speed * 2 * s * s;
+  
+
+    
+    // this.x += -s * (dx / d) + ((this.originX*this.width - this.x) * this.speed1) / 1000; // weird results with 2
+    // this.y += -s * (dy / d) + ((this.originY*this.height - this.y) * this.speed1) / 1000;
 
     
     // tt.pos[0] = tt.x;
