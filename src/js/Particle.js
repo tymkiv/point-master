@@ -1,128 +1,58 @@
+import {contain} from 'intrinsic-scale';
+
 export default class Particle {
   constructor(props = {}) {
-    this.width = props.width;
-    this.height = props.height;
+    this.index    = props.index; // index of point
+    this.floatArr = props.floatArr; // array of all normalized points
+    this.mouse    = props.mouse;
+    this.speed    = Math.random() / 2;   
 
-    this.originX = props.x || 0;
-    this.originY = props.y || 0;
-    this.originZ = props.z || 0;
+    this.containerWidth  = props.containerWidth;
+    this.containerHeight = props.containerHeight;
+    
+    this.NATURAL_WIDTH  = props.naturalWidth;  // natural size of pictur
+    this.NATURAL_HEIGHT = props.naturalHeight;
+    
+    this.NATIVE_X = props.x; // natives values cannot be changed for one image
+    this.NATIVE_Y = props.y;
+    this.NATIVE_Z = props.z;
 
-    this.originX = Math.random() * (0.75 - 0.25) + 0.25;
-    this.originY = Math.random() * (0.75 - 0.25) + 0.25;
-    this.originZ = Math.random();
+    this.originX = this.NATIVE_X; // gravitational coords
+    this.originY = this.NATIVE_Y;
+    this.originZ = this.NATIVE_Z;
 
-    this.x = this.originX;
-    this.y = this.originY;
+    this.updateSize();    
+
+    // random positioning outside the screen
+    this.x = this.containerWidth - Math.floor(Math.random() * this.containerWidth); 
+    this.y = this.containerHeight + Math.floor(Math.random() * this.containerHeight * 2);
     this.z = this.originZ;
 
-    this.x = this.width - Math.floor(Math.random() * this.width); // in 3
-    this.y = this.height + Math.floor(Math.random() * this.height * 2);
-
-    this.floatArr = props.floatArr;
-
-    this.index = props.index;
-
-    this.mouse = props.mouse;
-
-    this.speed = Math.random() / 2;
-    this.speed1 = Math.round((Math.random() * 400) / 10) + 1;
-    // this.speed = Math.random();
-    
-    
-
-    this.speedX = 0;
-    this.speedY = 0;
-    this.speedZ = 0;
-
-    // this.radius = 50;
-    this.radius = Math.random() * (50 - 30) + 30;
-
-    this.friction = 0.9;
-    // this.friction = Math.random() * (0.9 - 0.6) + 0.6;
-    this.gravity = 0.001;
-
-    
-
-    const normalized = this.normalize(this.x, this.y, this.z);
-
-    this.floatArr[this.index * 3 + 0] = normalized.x;
-    this.floatArr[this.index * 3 + 1] = normalized.y;
-    this.floatArr[this.index * 3 + 2] = normalized.z;
+    this.setPointToArray();
   }
 
-  normalize(x = 0, y = 0, z = 0) {
-    return {
-      x: x / this.width,
-      y: 1 - y / this.height,
-      z,
-    }
+  setPointToArray() {
+    // normalized point and set in arr
+    this.floatArr[this.index * 3 + 0] = this.x / this.containerWidth;
+    this.floatArr[this.index * 3 + 1] = 1 - this.y / this.containerHeight;
+    this.floatArr[this.index * 3 + 2] = this.z;
   }
 
-  resize(width, height) {
-    // if (this.index === 0)console.log(width / this.width);
-    // if (this.index === 0)console.log(this.originX);
-    // if (this.index === 0)console.log(width, height);
-
-    // this.originX *= width / this.width;
-    // this.originY *= height / this.height;
-    this.width = width;
-    this.height = height;
+  updateSize() {
+    // resizing from natural to [object-contain] size and centring
+    const {width, height, x, y} = contain(this.containerWidth, this.containerHeight, this.NATURAL_WIDTH, this.NATURAL_HEIGHT);
+    this.originX = this.NATIVE_X * width + x;
+    this.originY = this.NATIVE_Y * height + y;
   }
 
-  updateMy() {
-    // this.radius = Math.random() * (150 - 1) + 1;
-    // this.maxGravity = 0.01 + Math.random() * 0.03;
-    const distanceX = (this.mouse.x - this.x);
-    const distanceY = (this.mouse.y - this.y);
+  resize(width, height) {    
+    this.containerWidth = width;
+    this.containerHeight = height;
 
-    const distance = Math.sqrt(distanceX**2 + distanceY**2);
-
-    const normalX = distanceX / distance;
-    const normalY = distanceY / distance;
-
-    if (distance < this.radius){
-      // this.gravity *= 0.9;
-      this.speedX -= normalX;
-      this.speedY -= normalY;
-      
-    } else {
-      // this.speedZ /= 10;
-      // this.gravity += 0.1 * (this.maxGravity - this.gravity);
-    }
-    
-    // back home
-    const oDistX = this.originX - this.x;
-    const oDistY = this.originY - this.y;
-
-    this.speedX += oDistX * this.gravity;
-    this.speedY += oDistY * this.gravity;
-
-    this.speedX *= this.friction;
-    this.speedY *= this.friction;
-
-    this.x += this.speedX;
-    this.y += this.speedY;
-
-    this.z += Math.sqrt(this.speedX**2 + this.speedY**2) / 10;
-    this.z *= 0.95;
-    // const d = Math.sqrt(oDistX * oDistX + oDistY * oDistY);
-    // if (d) {
-    //   const s = 100 / d;
-    //   this.z = ((Math.round((Math.random() * 400) / 10) + 1) / 40) * s * s
-    //   if (this.index === 500) {
-    //     4le.log(this.z);
-    //   }
-    // }
-    
-    
-    const normalized = this.normalize(this.x, this.y, this.z);
-    
-    this.floatArr[this.index * 3 + 0] = normalized.x;
-    this.floatArr[this.index * 3 + 1] = normalized.y;
-    this.floatArr[this.index * 3 + 2] = normalized.z;
+    this.updateSize();
   }
 
-  update() {
+  move() {
     const dx = this.mouse.x - this.x;
     const dy = this.mouse.y - this.y;
     const d = Math.sqrt(dx * dx + dy * dy);
@@ -131,31 +61,35 @@ export default class Particle {
     const normalX = dx / d;
     const normalY = dy / d;
 
-    const oDistX = this.originX*this.width - this.x;
-    const oDistY = this.originY*this.height - this.y;
+    const oDistX = this.originX - this.x;
+    const oDistY = this.originY - this.y;
 
     // inertial returning to original place
-    this.x += this.speed/10 * oDistX;
-    this.y += this.speed/10 * oDistY;
-    
+    this.x += this.speed / 10 * oDistX;
+    this.y += this.speed / 10 * oDistY;
+
     // reaction on mouse
     this.x -= normalX * s;
     this.y -= normalY * s;
-    this.z = this.speed * 2 * s * s;
+    // this.z = this.speed * 2 * s * s;
   
+    this.setPointToArray();
+  }
 
+  changeImage(props) {
+    this.floatArr = props.floatArr;
+
+    this.NATURAL_WIDTH  = props.naturalWidth;
+    this.NATURAL_HEIGHT = props.naturalHeight;
     
-    // this.x += -s * (dx / d) + ((this.originX*this.width - this.x) * this.speed1) / 1000; // weird results with 2
-    // this.y += -s * (dy / d) + ((this.originY*this.height - this.y) * this.speed1) / 1000;
+    this.NATIVE_X = props.x;
+    this.NATIVE_Y = props.y;
+    this.NATIVE_Z = props.z;
 
+    this.originX = this.NATIVE_X;
+    this.originY = this.NATIVE_Y;
+    this.originZ = this.NATIVE_Z;
     
-    // tt.pos[0] = tt.x;
-    // tt.pos[1] = tt.y;
-    // tt.pos[2] = (tt.speed / 40) * s * s;
-
-    const normalized = this.normalize(this.x, this.y, this.z);
-    this.floatArr[this.index * 3 + 0] = normalized.x;
-    this.floatArr[this.index * 3 + 1] = normalized.y;
-    this.floatArr[this.index * 3 + 2] = normalized.z;
+    this.updateSize();    
   }
 }

@@ -12,11 +12,35 @@
   <body>
     <!-- BEGIN content -->
     <div class="out">
+      <div id="buttons">
+        <button class="js-0">IMG 0</button>
+        <button class="js-1">IMG 1</button>
+      </div>
       <div id="root"></div>
       <style>
         #root
         {
           height: 100vh;
+        }
+
+        #buttons
+        {
+          position: fixed;
+          top: 0;
+          left: 0;
+        }
+
+        #buttons button
+        {
+          padding: 10px;
+          background-color: tomato;
+          color: #fff;
+        }
+
+        #buttons .disabled
+        {
+          pointer-events: none;
+          opacity: 0.3;
         }
 
       </style>
