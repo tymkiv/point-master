@@ -16,8 +16,10 @@ export default class Particle {
     this.containerHeight = props.containerHeight;
     
     this.positionArr = props.positionArr;
+    this.sizeArr = props.sizeArr;
    
-    this.speed = Math.random() / 2;   
+    this.speed = Math.random() / 2;
+    this.megaZ = 0;
 
     this.updateSize();
 
@@ -36,11 +38,12 @@ export default class Particle {
     this.positionArr[this.index * 3 + 0] = this.x;
     this.positionArr[this.index * 3 + 1] = this.y;
     this.positionArr[this.index * 3 + 2] = this.z;
+    this.sizeArr[this.index] = this.megaZ;
   }
 
   updateSize() {
     const {width, height} = contain(this.containerWidth, this.containerHeight, this.NATURAL_WIDTH, this.NATURAL_HEIGHT);
-
+    // if(this.index === 0) console.log(width, height);
     this.originalX = this.NATURAL_X * width - width / 2;
     this.originalY = height / 2 - this.NATURAL_Y * height;
     this.originalZ = this.NATURAL_Z;
@@ -72,6 +75,7 @@ export default class Particle {
     // reaction on mouse
     this.x -= normalX * s;
     this.y -= normalY * s;
+    this.megaZ = this.speed * 2 * s * s;
     // this.z = this.speed * 2 * s * s;
   
     this.setPointToArray();

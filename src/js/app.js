@@ -16,7 +16,7 @@ class Sketch {
 
     this.isStarted = false;
     this.mouse = {x: 0, y: 0};
-    this.megaMouse = {x: 0, y: 0, z: 0}
+    this.megaMouse = {x: -1000, y: -1000, z: 0}
     this.particles = [];
     
     this.data = []; // main data 
@@ -85,6 +85,7 @@ class Sketch {
     if (!this.isStarted) {
       this.isStarted = true;
       this.positionArr = new Float32Array(this.data[indexOfData].coords.length * 3);
+      this.sizeArr = new Float32Array(this.data[indexOfData].coords.length * 3);
 
       for (let i = 0; i < this.data[indexOfData].coords.length; i += 1) {
         this.particles.push(new Particle({
@@ -101,12 +102,15 @@ class Sketch {
           containerHeight: this.height,
           
           positionArr: this.positionArr,          
+          sizeArr: this.sizeArr,          
         }));
       }
 
       this.geometry     = new THREE.BufferGeometry();
       this.positionAttribute = new THREE.BufferAttribute(this.positionArr, 3);
+      this.sizeAttribute = new THREE.BufferAttribute(this.sizeArr, 1);
       this.geometry.setAttribute('position', this.positionAttribute);
+      this.geometry.setAttribute('size', this.sizeAttribute);
 
       this.material = new THREE.ShaderMaterial({
         uniforms: {
@@ -116,6 +120,8 @@ class Sketch {
         },
         vertexShader,
         fragmentShader,
+        alphaTest: 0.5,
+        transparent: true,
       });
 
       this.points = new THREE.Points(this.geometry, this.material);
@@ -257,6 +263,8 @@ class Sketch {
 
     this.positionAttribute = new THREE.BufferAttribute( this.positionArr, 3 );
     this.geometry.setAttribute('position', this.positionAttribute);
+    this.sizeAttribute = new THREE.BufferAttribute(this.sizeArr, 1);
+    this.geometry.setAttribute('size', this.sizeAttribute);
   }
 }
 
