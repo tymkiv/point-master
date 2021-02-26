@@ -18,7 +18,7 @@ export default class Particle {
     this.positionArr = props.positionArr;
     this.sizeArr = props.sizeArr;
    
-    this.speed = Math.random() * (0.5 - 0.05) + 0.05;
+    this.speed = Math.random() * (0.5 - 0.01) + 0.01;
     this.megaZ = 0;
 
     this.updateSize();
