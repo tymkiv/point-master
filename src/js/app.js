@@ -148,7 +148,7 @@ class Sketch {
 
     canvas.width = width;
     canvas.height = height;
-    document.body.appendChild(canvas);
+    // document.body.appendChild(canvas);
     ctx.drawImage(img, 0, 0, width, height);
     for (let j = 0; j < Math.floor(height / particleSize); j += 1) {
       for (let i = 0; i < Math.floor(width / particleSize); i += 1) {
@@ -200,14 +200,14 @@ class Sketch {
   }
 
   onMouseMove(e, touch) {
-    this.mouse.x = ( e.clientX / this.width ) * 2 - 1;
-	  this.mouse.y = - ( e.clientY / this.height ) * 2 + 1;
-    
-    // if (touch) {
-    //   e.preventDefault();
-    //   this.mouse.x = ( e.clientX / this.width ) * 2 - 1;
-	  //   this.mouse.y = - ( e.clientY / this.height ) * 2 + 1;
-    // }
+    if (touch) {
+      e.preventDefault();
+      this.mouse.x = ( e.targetTouches[0].clientX / this.width ) * 2 - 1;
+	    this.mouse.y = - ( e.targetTouches[0].clientY / this.height ) * 2 + 1;
+    } else {
+      this.mouse.x = ( e.clientX / this.width ) * 2 - 1;
+	    this.mouse.y = - ( e.clientY / this.height ) * 2 + 1;
+    }
   }
 
   onWindowResize() {
