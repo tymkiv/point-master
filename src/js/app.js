@@ -39,7 +39,7 @@ class Sketch {
 
   config() {    
     this.minZcoord = 0;   // z coords random from [min] to [max]
-    this.maxZcoord = 150;
+    this.maxZcoord = 70;
 
     this.imageInfo = [
       {
@@ -72,8 +72,8 @@ class Sketch {
     this.renderer.setPixelRatio(window.devicePixelRatio);
     this.container.appendChild(this.renderer.domElement);
 
-    this.raycasterPlane = new THREE.Mesh(new THREE.PlaneGeometry(5000, 5000), new THREE.MeshBasicMaterial({color: new THREE.Color(1,1,1), opacity: 0, transparent: true, side: THREE.DoubleSide }))
-    this.raycasterPlane.position.set(0,0,100)
+    this.raycasterPlane = new THREE.Mesh(new THREE.PlaneGeometry(2000, 2000), new THREE.MeshBasicMaterial({opacity: 0.0, transparent: true }))
+    this.raycasterPlane.position.set(0,0,50)
     this.scene.add(this.raycasterPlane);
 
     window.addEventListener('resize', this.onWindowResize.bind(this));
