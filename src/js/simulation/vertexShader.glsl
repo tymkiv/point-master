@@ -8,6 +8,13 @@ void main() {
 
   vec4 mvPosition = modelViewMatrix * vec4(position, 1.);
 // gl_PointSize = max(2.0, min(10.0, aPosition.z));
-  gl_PointSize =  ((700.) / -mvPosition.z) + min(size, 10.);
+  // gl_PointSize =  (1000. / -mvPosition.z) + min(size, 15.);
+  gl_PointSize =  1000. * (1. / -mvPosition.z) + min(size, 15.);
+  // gl_PointSize = max(2.0, min(10.0, size));
+  // gl_PointSize = 2.;
+  // gl_PointSize =  ((400. * uPixelRatio) / -mvPosition.z) + min(size, 15.);
   gl_Position = projectionMatrix * mvPosition;
+
+  // gl_PointSize = max(2.0, min(10.0, size)) + 100. * (1. / -mvPosition.z);
+					
 }

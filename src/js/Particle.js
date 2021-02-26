@@ -18,7 +18,7 @@ export default class Particle {
     this.positionArr = props.positionArr;
     this.sizeArr = props.sizeArr;
    
-    this.speed = Math.random() / 2;
+    this.speed = Math.random() * (0.5 - 0.05) + 0.05;
     this.megaZ = 0;
 
     this.updateSize();
@@ -75,7 +75,7 @@ export default class Particle {
     // reaction on mouse
     this.x -= normalX * s;
     this.y -= normalY * s;
-    this.megaZ = this.speed * 2 * s * s;
+    this.megaZ = this.speed / 2 * s * s;
     // this.z = this.speed * 2 * s * s;
   
     this.setPointToArray();

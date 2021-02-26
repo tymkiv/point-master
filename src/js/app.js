@@ -73,6 +73,7 @@ class Sketch {
     this.container.appendChild(this.renderer.domElement);
 
     this.raycasterPlane = new THREE.Mesh(new THREE.PlaneGeometry(5000, 5000), new THREE.MeshBasicMaterial({color: new THREE.Color(1,1,1), opacity: 0, transparent: true, side: THREE.DoubleSide }))
+    this.raycasterPlane.position.set(0,0,100)
     this.scene.add(this.raycasterPlane);
 
     window.addEventListener('resize', this.onWindowResize.bind(this));
@@ -117,6 +118,7 @@ class Sketch {
           uResolution: { type: 'v2', value: new THREE.Vector2(this.resolutionWidth, this.resolutionHeight) },
           uPixelRatio: { type: 'f',  value: window.devicePixelRatio },
           uMouse:      { type: 'v2', value: this.megaMouse },
+          dotTexture:         { type: 't',  value: new THREE.TextureLoader().load('./img/whitedot.png') },
         },
         vertexShader,
         fragmentShader,
@@ -243,8 +245,15 @@ class Sketch {
   }
 
   update() {
-    this.camera.position.x += 0.05 * (this.mouse.x*this.width/20 - this.camera.position.x);
-    this.camera.position.y += 0.05 * (this.mouse.y*this.height/20 - this.camera.position.y);
+    const minMaxX = Math.min(Math.max((this.mouse.x / this.width * 500), -0.4), 0.4);
+    const minMaxY = Math.min(Math.max((-this.mouse.y / this.height * 200), -0.25), 0.25);
+    this.points.rotation.y += 0.05 * (minMaxX - this.points.rotation.y);
+    this.points.rotation.x += 0.05 * (minMaxY - this.points.rotation.x);
+    this.raycasterPlane.rotation.y += 0.05 * (this.mouse.x / this.width * 500 - this.raycasterPlane.rotation.y);
+    this.raycasterPlane.rotation.x += 0.05 * (-this.mouse.y / this.height * 200 - this.raycasterPlane.rotation.x);
+    // this.camera.position.y += 0.05 * (this.mouse.y*this.height/20 - this.camera.position.y);
+    // this.camera.position.x += 0.05 * (this.mouse.x*this.width/20 - this.camera.position.x);
+    // this.camera.position.y += 0.05 * (this.mouse.y*this.height/20 - this.camera.position.y);
 
     this.raycaster.setFromCamera( this.mouse, this.camera );
 
