@@ -2,52 +2,53 @@ import {contain} from 'intrinsic-scale';
 
 export default class Particle {
   constructor(props = {}) {
-    this.index    = props.index; // index of point
-    this.floatArr = props.floatArr; // array of all normalized points
-    this.mouse    = props.mouse;
-    this.speed    = Math.random() / 2;   
+    this.index = props.index;
+    this.mouse = props.mouse;
+
+    this.NATURAL_X = props.x;
+    this.NATURAL_Y = props.y;
+    this.NATURAL_Z = props.z;
+
+    this.NATURAL_WIDTH  = props.naturalWidth;
+    this.NATURAL_HEIGHT = props.naturalHeight;
 
     this.containerWidth  = props.containerWidth;
     this.containerHeight = props.containerHeight;
     
-    this.NATURAL_WIDTH  = props.naturalWidth;  // natural size of pictur
-    this.NATURAL_HEIGHT = props.naturalHeight;
-    
-    this.NATIVE_X = props.x; // natives values cannot be changed for one image
-    this.NATIVE_Y = props.y;
-    this.NATIVE_Z = props.z;
+    this.positionArr = props.positionArr;
+   
+    this.speed = Math.random() / 2;   
 
-    this.originX = this.NATIVE_X; // gravitational coords
-    this.originY = this.NATIVE_Y;
-    this.originZ = this.NATIVE_Z;
+    this.updateSize();
 
-    this.updateSize();    
+    this.x = this.originalX;
+    this.y = this.originalY;
+    this.z = this.originalZ;
 
     // random positioning outside the screen
-    this.x = this.containerWidth - Math.floor(Math.random() * this.containerWidth); 
-    this.y = this.containerHeight + Math.floor(Math.random() * this.containerHeight * 2);
-    this.z = this.originZ;
+    this.x = Math.floor(Math.random() * this.containerWidth) - this.containerWidth / 2; 
+    this.y = this.containerHeight / 2 - (this.containerHeight + Math.floor(Math.random() * this.containerHeight * 2));
 
     this.setPointToArray();
   }
 
   setPointToArray() {
-    // normalized point and set in arr
-    this.floatArr[this.index * 3 + 0] = this.x / this.containerWidth;
-    this.floatArr[this.index * 3 + 1] = 1 - this.y / this.containerHeight;
-    this.floatArr[this.index * 3 + 2] = this.z;
+    this.positionArr[this.index * 3 + 0] = this.x;
+    this.positionArr[this.index * 3 + 1] = this.y;
+    this.positionArr[this.index * 3 + 2] = this.z;
   }
 
   updateSize() {
-    // resizing from natural to [object-contain] size and centring
-    const {width, height, x, y} = contain(this.containerWidth, this.containerHeight, this.NATURAL_WIDTH, this.NATURAL_HEIGHT);
-    this.originX = this.NATIVE_X * width + x;
-    this.originY = this.NATIVE_Y * height + y;
+    const {width, height} = contain(this.containerWidth, this.containerHeight, this.NATURAL_WIDTH, this.NATURAL_HEIGHT);
+
+    this.originalX = this.NATURAL_X * width - width / 2;
+    this.originalY = height / 2 - this.NATURAL_Y * height;
+    this.originalZ = this.NATURAL_Z;
   }
 
-  resize(width, height) {    
-    this.containerWidth = width;
-    this.containerHeight = height;
+  resize(newContainerWidth, newContainerHeight) {    
+    this.containerWidth = newContainerWidth;
+    this.containerHeight = newContainerHeight;
 
     this.updateSize();
   }
@@ -61,8 +62,8 @@ export default class Particle {
     const normalX = dx / d;
     const normalY = dy / d;
 
-    const oDistX = this.originX - this.x;
-    const oDistY = this.originY - this.y;
+    const oDistX = this.originalX - this.x;
+    const oDistY = this.originalY - this.y;
 
     // inertial returning to original place
     this.x += this.speed / 10 * oDistX;
@@ -77,18 +78,12 @@ export default class Particle {
   }
 
   changeImage(props) {
-    this.floatArr = props.floatArr;
-
     this.NATURAL_WIDTH  = props.naturalWidth;
     this.NATURAL_HEIGHT = props.naturalHeight;
     
-    this.NATIVE_X = props.x;
-    this.NATIVE_Y = props.y;
-    this.NATIVE_Z = props.z;
-
-    this.originX = this.NATIVE_X;
-    this.originY = this.NATIVE_Y;
-    this.originZ = this.NATIVE_Z;
+    this.NATURAL_X = props.x;
+    this.NATURAL_Y = props.y;
+    this.NATURAL_Z = props.z;
     
     this.updateSize();    
   }
