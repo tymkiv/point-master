@@ -64,7 +64,7 @@ class Sketch {
   init() {
     this.scene     = new THREE.Scene();
     this.renderer  = new THREE.WebGLRenderer();
-    this.camera    = new THREE.PerspectiveCamera(70, this.container.clientWidth / this.container.clientHeight, 0.001, 10000);
+    this.camera    = new THREE.PerspectiveCamera(90, this.container.clientWidth / this.container.clientHeight, 0.001, 10000);
     this.raycaster = new THREE.Raycaster();
     // this.controls  = new OrbitControls(this.camera, this.renderer.domElement);
     
@@ -246,7 +246,7 @@ class Sketch {
 
   update() {
     const minMaxX = Math.min(Math.max((this.mouse.x / this.width * 500), -0.4), 0.4);
-    const minMaxY = Math.min(Math.max((-this.mouse.y / this.height * 200), -0.25), 0.25);
+    const minMaxY = Math.min(Math.max((-this.mouse.y / this.height * 200), -0.35), 0.35);
     this.points.rotation.y += 0.05 * (minMaxX - this.points.rotation.y);
     this.points.rotation.x += 0.05 * (minMaxY - this.points.rotation.x);
     this.raycasterPlane.rotation.y += 0.05 * (this.mouse.x / this.width * 500 - this.raycasterPlane.rotation.y);
