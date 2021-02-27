@@ -1,16 +1,11 @@
-import {contain} from 'intrinsic-scale';
-
 export default class Particle {
   constructor(props = {}) {
     this.index = props.index;
     this.mouse = props.mouse;
 
-    this.NATURAL_X = props.x;
-    this.NATURAL_Y = props.y;
-    this.NATURAL_Z = props.z;
-
-    this.NATURAL_WIDTH  = props.naturalWidth;
-    this.NATURAL_HEIGHT = props.naturalHeight;
+    this.originalX = props.x;
+    this.originalY = props.y;
+    this.originalZ = props.z;
 
     this.containerWidth  = props.containerWidth;
     this.containerHeight = props.containerHeight;
@@ -20,8 +15,6 @@ export default class Particle {
    
     this.speed = Math.random() * (0.5 - 0.001) + 0.001;
     this.megaZ = 0;
-
-    this.updateSize();
 
     this.x = this.originalX;
     this.y = this.originalY;
@@ -39,21 +32,6 @@ export default class Particle {
     this.positionArr[this.index * 3 + 1] = this.y;
     this.positionArr[this.index * 3 + 2] = this.z;
     this.sizeArr[this.index] = this.megaZ;
-  }
-
-  updateSize() {
-    const {width, height} = contain(this.containerWidth, this.containerHeight, this.NATURAL_WIDTH, this.NATURAL_HEIGHT);
-    // if(this.index === 0) console.log(width, height);
-    this.originalX = this.NATURAL_X * width - width / 2;
-    this.originalY = height / 2 - this.NATURAL_Y * height;
-    this.originalZ = this.NATURAL_Z;
-  }
-
-  resize(newContainerWidth, newContainerHeight) {    
-    this.containerWidth = newContainerWidth;
-    this.containerHeight = newContainerHeight;
-
-    this.updateSize();
   }
 
   move() {
@@ -76,19 +54,13 @@ export default class Particle {
     this.x -= normalX * s;
     this.y -= normalY * s;
     this.megaZ = this.speed / 2 * s * s;
-    // this.z = this.speed * 2 * s * s;
   
     this.setPointToArray();
   }
 
-  changeImage(props) {
-    this.NATURAL_WIDTH  = props.naturalWidth;
-    this.NATURAL_HEIGHT = props.naturalHeight;
-    
-    this.NATURAL_X = props.x;
-    this.NATURAL_Y = props.y;
-    this.NATURAL_Z = props.z;
-    
-    this.updateSize();    
+  changeImage() {
+    this.x = this.originalX;
+    this.y = this.originalY;
+    this.z = this.originalZ; 
   }
 }

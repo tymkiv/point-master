@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import {contain} from 'intrinsic-scale';
 
 import Particle from './Particle';
 import vertexShader from './simulation/vertexShader.glsl';
@@ -16,7 +17,7 @@ class Sketch {
 
     this.isStarted = false;
     this.mouse = {x: 0, y: 0};
-    this.megaMouse = {x: -1000, y: -1000, z: 0}
+    this.megaMouse = {x: 0, y: 0, z: 0}
     this.particles = [];
     
     this.data = []; // main data 
@@ -64,7 +65,7 @@ class Sketch {
   init() {
     this.scene     = new THREE.Scene();
     this.renderer  = new THREE.WebGLRenderer();
-    this.camera    = new THREE.PerspectiveCamera(90, this.container.clientWidth / this.container.clientHeight, 0.001, 10000);
+    this.camera    = new THREE.PerspectiveCamera(75, this.container.clientWidth / this.container.clientHeight, 0.001, 10000);
     this.raycaster = new THREE.Raycaster();
     // this.controls  = new OrbitControls(this.camera, this.renderer.domElement);
     
@@ -73,8 +74,8 @@ class Sketch {
     this.container.appendChild(this.renderer.domElement);
 
     this.raycasterPlane = new THREE.Mesh(new THREE.PlaneGeometry(2000, 2000), new THREE.MeshBasicMaterial({opacity: 0.0, transparent: true }))
-    this.raycasterPlane.position.set(0,0,50)
-    this.scene.add(this.raycasterPlane);
+    // this.raycasterPlane.position.set(0,0,0)
+    // this.scene.add(this.raycasterPlane);
 
     window.addEventListener('resize', this.onWindowResize.bind(this));
     document.addEventListener('mousemove', this.onMouseMove.bind(this));
@@ -97,8 +98,6 @@ class Sketch {
           y: this.data[indexOfData].coords[i].y,
           z: Math.random() * (this.maxZcoord - this.minZcoord) + this.minZcoord,
 
-          naturalWidth:  this.data[indexOfData].width,
-          naturalHeight: this.data[indexOfData].height,
           containerWidth: this.width,
           containerHeight: this.height,
           
@@ -124,6 +123,7 @@ class Sketch {
         fragmentShader,
         alphaTest: 0.5,
         transparent: true,
+        // side: THREE.DoubleSide
       });
 
       this.points = new THREE.Points(this.geometry, this.material);
@@ -134,6 +134,10 @@ class Sketch {
   }
 
   updateSketch(indexOfData) {    
+    this.currentNatureWidth = this.data[indexOfData].width;
+    this.currentNatureHeight = this.data[indexOfData].height;
+
+    // this.updateSceneSize();
     for (let i = 0; i < this.data[indexOfData].coords.length; i += 1) {
       this.particles[i].changeImage({
         x: this.data[indexOfData].coords[i].x,
@@ -162,8 +166,8 @@ class Sketch {
       for (let i = 0; i < Math.floor(width / particleSize); i += 1) {
         if (this.hasFill(i * particleSize, j * particleSize, ctx, particleSize)) {
           coords.push({
-            x: i * particleSize / width, 
-            y: j * particleSize / height 
+            x: i * particleSize - width / 2, 
+            y: height / 2 - j * particleSize 
           })
         }
       }
@@ -220,10 +224,6 @@ class Sketch {
 
   onWindowResize() {
     this.updateSize();
-
-    this.particles.forEach(particle => {
-      particle.resize(this.width, this.height);
-    })
     
     this.material.uniforms.uResolution.value.x = this.resolutionWidth;
     this.material.uniforms.uResolution.value.y = this.resolutionHeight;
@@ -232,9 +232,17 @@ class Sketch {
   updateSize() {
     this.width  = this.container.clientWidth;
     this.height = this.container.clientHeight;
+    
     this.renderer.setSize(this.width, this.height);
     this.camera.aspect = this.width / this.height;
-		this.camera.updateProjectionMatrix();
+		
+    const maxWidth = 650;
+    const height = maxWidth / this.camera.aspect;
+    const angle = Math.atan(height/2 / this.camera.position.z);
+    this.camera.fov = (angle * 180) / Math.PI * 2; // to deg
+    console.log(this.camera.fov);
+    this.camera.updateProjectionMatrix();
+    
     this.resolutionWidth  = this.renderer.domElement.width;
     this.resolutionHeight = this.renderer.domElement.height;
   }
@@ -249,11 +257,8 @@ class Sketch {
     const minMaxY = Math.min(Math.max((-this.mouse.y / this.height * 200), -0.35), 0.35);
     this.points.rotation.y += 0.05 * (minMaxX - this.points.rotation.y);
     this.points.rotation.x += 0.05 * (minMaxY - this.points.rotation.x);
-    this.raycasterPlane.rotation.y += 0.05 * (this.mouse.x / this.width * 500 - this.raycasterPlane.rotation.y);
-    this.raycasterPlane.rotation.x += 0.05 * (-this.mouse.y / this.height * 200 - this.raycasterPlane.rotation.x);
-    // this.camera.position.y += 0.05 * (this.mouse.y*this.height/20 - this.camera.position.y);
-    // this.camera.position.x += 0.05 * (this.mouse.x*this.width/20 - this.camera.position.x);
-    // this.camera.position.y += 0.05 * (this.mouse.y*this.height/20 - this.camera.position.y);
+    this.raycasterPlane.rotation.y += 0.05 * (minMaxX - this.raycasterPlane.rotation.y);
+    this.raycasterPlane.rotation.x += 0.05 * (minMaxY - this.raycasterPlane.rotation.x);
 
     this.raycaster.setFromCamera( this.mouse, this.camera );
 
