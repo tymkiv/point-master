@@ -58,9 +58,9 @@ export default class Particle {
     this.setPointToArray();
   }
 
-  changeImage() {
-    this.x = this.originalX;
-    this.y = this.originalY;
-    this.z = this.originalZ; 
+  changeImage(props) {
+    this.originalX = props.x;
+    this.originalY = props.y;
+    this.originalZ = props.z;
   }
 }

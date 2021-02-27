@@ -134,8 +134,8 @@ class Sketch {
   }
 
   updateSketch(indexOfData) {    
-    this.currentNatureWidth = this.data[indexOfData].width;
-    this.currentNatureHeight = this.data[indexOfData].height;
+    // this.currentNatureWidth = this.data[indexOfData].width;
+    // this.currentNatureHeight = this.data[indexOfData].height;
 
     // this.updateSceneSize();
     for (let i = 0; i < this.data[indexOfData].coords.length; i += 1) {
