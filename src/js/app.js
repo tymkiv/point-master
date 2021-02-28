@@ -17,6 +17,7 @@ class Sketch {
 
     this.isStarted = false;
     this.mouse = {x: 0, y: 0};
+    this.myMouse = {x: 0, y: 0};
     this.megaMouse = {x: 0, y: 0, z: 0}
     this.particles = [];
     
@@ -47,33 +48,33 @@ class Sketch {
         path: 'img/1.png',
         particleSize: 2,
       },
-      {
-        path: 'img/2.png',
-        particleSize: 2,
-      },
-      {
-        path: 'img/b.png',
-        particleSize: 2,
-      },
-      {
-        path: 'img/super.png',
-        particleSize: 2,
-      },
+      // {
+      //   path: 'img/2.png',
+      //   particleSize: 2,
+      // },
+      // {
+      //   path: 'img/b.png',
+      //   particleSize: 2,
+      // },
+      // {
+      //   path: 'img/super.png',
+      //   particleSize: 2,
+      // },
     ]
   }
 
   init() {
     this.scene     = new THREE.Scene();
     this.renderer  = new THREE.WebGLRenderer();
-    this.camera    = new THREE.PerspectiveCamera(75, this.container.clientWidth / this.container.clientHeight, 0.001, 10000);
+    this.camera    = new THREE.PerspectiveCamera(36.7, this.container.clientWidth / this.container.clientHeight, 1, 10000);
     this.raycaster = new THREE.Raycaster();
     // this.controls  = new OrbitControls(this.camera, this.renderer.domElement);
-    
+
     this.camera.position.set(0, 0, 600);
     this.renderer.setPixelRatio(window.devicePixelRatio);
     this.container.appendChild(this.renderer.domElement);
 
-    this.raycasterPlane = new THREE.Mesh(new THREE.PlaneGeometry(2000, 2000), new THREE.MeshBasicMaterial({opacity: 0.0, transparent: true }))
+    this.raycasterPlane = new THREE.Mesh(new THREE.PlaneGeometry(20000, 20000), new THREE.MeshBasicMaterial({opacity: 0.0, transparent: true }))
     // this.raycasterPlane.position.set(0,0,0)
     // this.scene.add(this.raycasterPlane);
 
@@ -123,6 +124,7 @@ class Sketch {
         fragmentShader,
         alphaTest: 0.5,
         transparent: true,
+        frustumCulled: false
         // side: THREE.DoubleSide
       });
 
@@ -220,6 +222,9 @@ class Sketch {
       this.mouse.x = ( e.clientX / this.width ) * 2 - 1;
 	    this.mouse.y = - ( e.clientY / this.height ) * 2 + 1;
     }
+
+    this.myMouse.x = e.clientX
+    this.myMouse.y = e.clientY
   }
 
   onWindowResize() {
@@ -236,11 +241,11 @@ class Sketch {
     this.renderer.setSize(this.width, this.height);
     this.camera.aspect = this.width / this.height;
 		
-    const maxWidth = 650;
-    const height = maxWidth / this.camera.aspect;
-    const angle = Math.atan(height/2 / this.camera.position.z);
-    this.camera.fov = (angle * 180) / Math.PI * 2; // to deg
-    console.log(this.camera.fov);
+    // const maxWidth = 650;
+    // const height = maxWidth / this.camera.aspect;
+    // const angle = Math.atan(height/2 / this.camera.position.z);
+    // this.camera.fov = (angle * 180) / Math.PI * 2; // to deg
+    // console.log(this.camera.fov);
     this.camera.updateProjectionMatrix();
     
     this.resolutionWidth  = this.renderer.domElement.width;
@@ -253,12 +258,24 @@ class Sketch {
   }
 
   update() {
-    const minMaxX = Math.min(Math.max((this.mouse.x / this.width * 500), -0.4), 0.4);
-    const minMaxY = Math.min(Math.max((-this.mouse.y / this.height * 200), -0.35), 0.35);
-    this.points.rotation.y += 0.05 * (minMaxX - this.points.rotation.y);
-    this.points.rotation.x += 0.05 * (minMaxY - this.points.rotation.x);
-    this.raycasterPlane.rotation.y += 0.05 * (minMaxX - this.raycasterPlane.rotation.y);
-    this.raycasterPlane.rotation.x += 0.05 * (minMaxY - this.raycasterPlane.rotation.x);
+    // const minMaxX = Math.min(Math.max((this.mouse.x / this.width * 500), -0.4), 0.4);
+    // const minMaxY = Math.min(Math.max((-this.mouse.y / this.height * 200), -0.35), 0.35);
+    // console.log(minMaxX, minMaxY);
+    // console.log(0.05 * (minMaxX - this.points.rotation.y), 0.05 * (minMaxY - this.points.rotation.x));
+    // const t = (this.myMouse.x -  this.width / 2) / ( this.width / 2);
+    // const n = (this.myMouse.y - this.height / 2) / (this.height / 2);
+    // i.destination.x = .5 * n,
+    // i.destination.y = .5 * t,
+    // console.log(n, t);
+    // console.log((this.scene.rotation.x * 180) / Math.PI * 2);
+    
+    this.scene.rotation.x += 0.5 * (Math.PI/180);
+
+    // this.scene.rotation.y = .5 * t;
+    // this.scene.rotation.y += 0.05 * (minMaxX - this.scene.rotation.y);
+    // this.scene.rotation.x += 0.05 * (minMaxY - this.scene.rotation.x);
+    // this.raycasterPlane.rotation.y += 0.05 * (minMaxX - this.raycasterPlane.rotation.y);
+    // this.raycasterPlane.rotation.x += 0.05 * (minMaxY - this.raycasterPlane.rotation.x);
 
     this.raycaster.setFromCamera( this.mouse, this.camera );
 
