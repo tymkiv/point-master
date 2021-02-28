@@ -1,9 +1,13 @@
 import * as THREE from 'three';
-import {contain} from 'intrinsic-scale';
 
 import Particle from './Particle';
 import vertexShader from './simulation/vertexShader.glsl';
 import fragmentShader from './simulation/fragmentShader.glsl';
+
+import dino from './simulation/dino';
+import hello from './simulation/hello';
+import batman from './simulation/batman';
+import superman from './simulation/superman';
 
 const OrbitControls = require('three-orbit-controls')(THREE)
 
@@ -17,19 +21,20 @@ class Sketch {
 
     this.isStarted = false;
     this.mouse = {x: 0, y: 0};
-    this.myMouse = {x: 0, y: 0};
     this.megaMouse = {x: 0, y: 0, z: 0}
     this.particles = [];
-    
-    this.data = []; // main data 
 
-    this.loadImages(this.imageInfo.map(info => info.path), (imgs) => {
+    this.loadImages(this.data.map(info => info.path), imgs => {
       imgs.forEach((img, index) => {
-        const {coords, width, height} = this.getFilledCoordsFromImg(
-          img, 
-          this.imageInfo[index].particleSize
-        ) 
-        this.data.push({img, coords, width, height})
+        if (!this.data[index].coords) {
+          const {coords} = this.getFilledCoordsFromImg(
+            img, 
+            this.data[index].particleSize
+          ) 
+          this.data[index].img    = img;
+          this.data[index].coords = coords;
+        }
+        
       })
       const maxSize = this.data.reduce((max, {coords}) => Math.max(max, coords.length), 0);
       this.data.forEach(data => {
@@ -43,23 +48,27 @@ class Sketch {
     this.minZcoord = 0;   // z coords random from [min] to [max]
     this.maxZcoord = 70;
 
-    this.imageInfo = [
+    this.data = [
       {
         path: 'img/1.png',
         particleSize: 2,
+        coords: dino
       },
-      // {
-      //   path: 'img/2.png',
-      //   particleSize: 2,
-      // },
-      // {
-      //   path: 'img/b.png',
-      //   particleSize: 2,
-      // },
-      // {
-      //   path: 'img/super.png',
-      //   particleSize: 2,
-      // },
+      {
+        path: 'img/2.png',
+        particleSize: 2,
+        coords: hello
+      },
+      {
+        path: 'img/b.png',
+        particleSize: 2,
+        coords: batman
+      },
+      {
+        path: 'img/super.png',
+        particleSize: 2,
+        coords: superman
+      },
     ]
   }
 
@@ -74,9 +83,7 @@ class Sketch {
     this.renderer.setPixelRatio(window.devicePixelRatio);
     this.container.appendChild(this.renderer.domElement);
 
-    this.raycasterPlane = new THREE.Mesh(new THREE.PlaneGeometry(20000, 20000), new THREE.MeshBasicMaterial({opacity: 0.0, transparent: true }))
-    // this.raycasterPlane.position.set(0,0,0)
-    // this.scene.add(this.raycasterPlane);
+    this.raycasterPlane = new THREE.Mesh(new THREE.PlaneGeometry(20000, 20000), new THREE.MeshBasicMaterial())
 
     window.addEventListener('resize', this.onWindowResize.bind(this));
     document.addEventListener('mousemove', this.onMouseMove.bind(this));
@@ -118,17 +125,15 @@ class Sketch {
           uResolution: { type: 'v2', value: new THREE.Vector2(this.resolutionWidth, this.resolutionHeight) },
           uPixelRatio: { type: 'f',  value: window.devicePixelRatio },
           uMouse:      { type: 'v2', value: this.megaMouse },
-          dotTexture:         { type: 't',  value: new THREE.TextureLoader().load('./img/whitedot.png') },
         },
         vertexShader,
         fragmentShader,
         alphaTest: 0.5,
         transparent: true,
-        frustumCulled: false
-        // side: THREE.DoubleSide
       });
 
       this.points = new THREE.Points(this.geometry, this.material);
+      this.points.frustumCulled = false;
       this.scene.add(this.points);
 
       this.animate();
@@ -136,17 +141,11 @@ class Sketch {
   }
 
   updateSketch(indexOfData) {    
-    // this.currentNatureWidth = this.data[indexOfData].width;
-    // this.currentNatureHeight = this.data[indexOfData].height;
-
-    // this.updateSceneSize();
     for (let i = 0; i < this.data[indexOfData].coords.length; i += 1) {
       this.particles[i].changeImage({
         x: this.data[indexOfData].coords[i].x,
         y: this.data[indexOfData].coords[i].y,
         z: Math.random() * (this.maxZcoord - this.minZcoord) + this.minZcoord,
-        naturalWidth:  this.data[indexOfData].width,
-        naturalHeight: this.data[indexOfData].height,
       })  
     }
   }  
@@ -222,9 +221,6 @@ class Sketch {
       this.mouse.x = ( e.clientX / this.width ) * 2 - 1;
 	    this.mouse.y = - ( e.clientY / this.height ) * 2 + 1;
     }
-
-    this.myMouse.x = e.clientX
-    this.myMouse.y = e.clientY
   }
 
   onWindowResize() {
@@ -240,12 +236,13 @@ class Sketch {
     
     this.renderer.setSize(this.width, this.height);
     this.camera.aspect = this.width / this.height;
-		
-    // const maxWidth = 650;
-    // const height = maxWidth / this.camera.aspect;
-    // const angle = Math.atan(height/2 / this.camera.position.z);
-    // this.camera.fov = (angle * 180) / Math.PI * 2; // to deg
-    // console.log(this.camera.fov);
+
+    const tempAspect = this.camera.aspect < 1 ? this.camera.aspect : 1;
+    const maxWidth = 620;
+    const height = maxWidth / tempAspect;
+    const angle = Math.atan(height/2 / this.camera.position.z);
+    this.camera.fov = (angle * 180) / Math.PI * 2; // to deg
+    
     this.camera.updateProjectionMatrix();
     
     this.resolutionWidth  = this.renderer.domElement.width;
@@ -258,24 +255,11 @@ class Sketch {
   }
 
   update() {
-    // const minMaxX = Math.min(Math.max((this.mouse.x / this.width * 500), -0.4), 0.4);
-    // const minMaxY = Math.min(Math.max((-this.mouse.y / this.height * 200), -0.35), 0.35);
-    // console.log(minMaxX, minMaxY);
-    // console.log(0.05 * (minMaxX - this.points.rotation.y), 0.05 * (minMaxY - this.points.rotation.x));
-    // const t = (this.myMouse.x -  this.width / 2) / ( this.width / 2);
-    // const n = (this.myMouse.y - this.height / 2) / (this.height / 2);
-    // i.destination.x = .5 * n,
-    // i.destination.y = .5 * t,
-    // console.log(n, t);
-    // console.log((this.scene.rotation.x * 180) / Math.PI * 2);
+    const minMaxX = Math.min(Math.max((this.mouse.x  / this.width  * 500), -0.4), 0.4);
+    const minMaxY = Math.min(Math.max((-this.mouse.y / this.height * 200), -0.35), 0.35);
     
-    this.scene.rotation.x += 0.5 * (Math.PI/180);
-
-    // this.scene.rotation.y = .5 * t;
-    // this.scene.rotation.y += 0.05 * (minMaxX - this.scene.rotation.y);
-    // this.scene.rotation.x += 0.05 * (minMaxY - this.scene.rotation.x);
-    // this.raycasterPlane.rotation.y += 0.05 * (minMaxX - this.raycasterPlane.rotation.y);
-    // this.raycasterPlane.rotation.x += 0.05 * (minMaxY - this.raycasterPlane.rotation.x);
+    this.scene.rotation.y += 0.05 * (minMaxX - this.scene.rotation.y);
+    this.scene.rotation.x += 0.05 * (minMaxY - this.scene.rotation.x);
 
     this.raycaster.setFromCamera( this.mouse, this.camera );
 
