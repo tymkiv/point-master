@@ -148,7 +148,13 @@ class Sketch {
         z: Math.random() * (this.maxZcoord - this.minZcoord) + this.minZcoord,
       })  
     }
-  }  
+  }
+
+  changeSketch(sketch) {
+    this.particles.forEach(particle => {
+      particle.changeSketch(sketch);
+    })
+  }
 
   getFilledCoordsFromImg(img, particleSize) {
     const canvas = document.createElement('canvas');
@@ -288,3 +294,4 @@ document.querySelector('.js-0').addEventListener('click', () => {sketch.updateSk
 document.querySelector('.js-1').addEventListener('click', () => {sketch.updateSketch(1)})
 document.querySelector('.js-2').addEventListener('click', () => {sketch.updateSketch(2)})
 document.querySelector('.js-3').addEventListener('click', () => {sketch.updateSketch(3)})
+document.querySelector('.js-4').addEventListener('click', () => {sketch.changeSketch('one')})
